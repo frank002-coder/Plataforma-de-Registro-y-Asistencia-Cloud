@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro al Evento</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f0f2f5; display: flex; align-items: center; justify-content: center; height: 100vh; }
+        .card { box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: none; }
+        .btn-primary { background-color: #6c63ff; border: none; }
+        .btn-primary:hover { background-color: #5a52d5; }
+        #mensaje { display: none; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card p-4">
+                    <h3 class="text-center mb-4">☁️ Registro de Asistencia</h3>
+                    <p class="text-center text-muted">Ingresa tus datos para quedar registrado en la nube.</p>
+                    
+                    <form id="formularioRegistro">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre Completo</label>
+                            <input type="text" class="form-control" id="nombre" required placeholder="Ej: Juan Pérez">
+                        </div>
+                        <div class="mb-3">
+                            <label for="correo" class="form-label">Correo Electrónico</label>
+                            <input type="email" class="form-control" id="correo" required placeholder="Ej: juan@universidad.edu">
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" id="btnEnviar">
+                                Registrarse 🚀
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="mensaje" class="alert" role="alert"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const formulario = document.getElementById('formularioRegistro');
+        const mensajeDiv = document.getElementById('mensaje');
+        const btnEnviar = document.getElementById('btnEnviar');
+
+        formulario.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Evita que la página se recargue
+
+            // 1. Preparamos los datos
+            const datosUsuario = {
+                nombre: document.getElementById('nombre').value,
+                correo: document.getElementById('correo').value
+            };
+
+            // Mostrar estado de carga
+            btnEnviar.disabled = true;
+            btnEnviar.textContent = "Enviando a la nube...";
+            mensajeDiv.style.display = 'none';
+
+            try {
+                // ⚠️ CAMBIA ESTA URL POR LA TUYA DE RENDER ⚠️
+                // Ejemplo: https://tu-proyecto.onrender.com/api/v1/registro
+                const URL_API = "https://plataforma-de-registro-y-asistencia-cloud.onrender.com/api/v1/registro";
+
+                // 2. Enviamos los datos a tu API Python
+                const respuesta = await fetch(URL_API, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(datosUsuario)
+                });
+
+                const resultado = await respuesta.json();
+
+                // 3. Mostramos el resultado
+                mensajeDiv.style.display = 'block';
+                
+                if (respuesta.status === 201) {
+                    mensajeDiv.className = 'alert alert-success';
+                    mensajeDiv.innerHTML = `✅ <b>¡Éxito!</b> ${resultado.mensaje}<br>ID asignado: ${resultado.participante.id}`;
+                    formulario.reset(); // Limpiar formulario
+                } else {
+                    mensajeDiv.className = 'alert alert-danger';
+                    mensajeDiv.innerText = `❌ Error: ${resultado.error || 'Algo salió mal'}`;
+                }
+
+            } catch (error) {
+                console.error(error);
+                mensajeDiv.style.display = 'block';
+                mensajeDiv.className = 'alert alert-danger';
+                mensajeDiv.innerText = "❌ Error de conexión con el servidor. Revisa la consola.";
+            } finally {
+                btnEnviar.disabled = false;
+                btnEnviar.textContent = "Registrarse 🚀";
+            }
+        });
+    </script>
+
+</body>
+</html>

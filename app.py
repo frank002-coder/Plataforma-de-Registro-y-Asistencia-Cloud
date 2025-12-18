@@ -9,8 +9,8 @@ app = Flask(__name__)
 CORS(app) # Esto permite que tu API sea llamada desde cualquier lugar (Google, tu web, etc)
 # --- RUTA PRINCIPAL (La puerta de entrada) ---
 @app.route('/')
-def home():
-    return "Hola mundo desde Render"
+def bienvenida():
+    return "Hola! Backend funcionando correctamente."
 # --- RUTA 1: RECIBIR DATOS (Lo que llama Google Forms) ---
 @app.route('/api/v1/registro', methods=['POST'])
 def registrar_participante():

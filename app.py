@@ -7,7 +7,10 @@ base_de_datos_simulada = []
 
 app = Flask(__name__)
 CORS(app) # Esto permite que tu API sea llamada desde cualquier lugar (Google, tu web, etc)
-
+# --- RUTA PRINCIPAL (La puerta de entrada) ---
+@app.route('/')
+def home():
+    return "¡Hola! Tu backend está funcionando correctamente en la nube. 🚀"
 # --- RUTA 1: RECIBIR DATOS (Lo que llama Google Forms) ---
 @app.route('/api/v1/registro', methods=['POST'])
 def registrar_participante():
